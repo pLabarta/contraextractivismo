@@ -138,6 +138,12 @@ export const MODEL = {
         y: 0,  // Rotate left/right - animation will add to this
         z: 0   // Roll rotation
     },
+    // Rotation in FPS mode (radians) - applied when entering first-person mode
+    fpsRotation: {
+        x: -1.59,  // Tilt up/down (0 = flat/horizontal, good for walking on)
+        y: 0,  // Rotate left/right
+        z: 0   // Roll rotation
+    },
     position: { x: 0, y: -1, z: 0 },  // Model position in scene
     scale: {
         targetSize: 3  // Max dimension in units (1.5x of original 2)

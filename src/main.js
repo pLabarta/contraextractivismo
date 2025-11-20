@@ -3,7 +3,8 @@ import { createMeshBackground, updateMeshBackground } from './background/meshBac
 import { loadModel, updateModelProgress, rotateModel } from './model/modelLoader.js';
 import { LoadingDisplay } from './ui/loadingDisplay.js';
 import { showTables, hideTables } from './ui/metalTables.js';
-import { ANIMATION } from './config.js';
+import { FirstPersonControls } from './controls/firstPersonControls.js';
+import { ANIMATION, MODEL, DEBUG } from './config.js';
 
 // Initialize scene, camera, and renderer
 const scene = createScene();
@@ -38,6 +39,8 @@ loadModel(
         fbxObject = fbx;
         modelMaterial = material;
         originalMaterials = origMaterials;
+        // Set the model for FPS controls
+        fpsControls.setModel(fbxObject);
     },
     (error) => {
         console.error('Failed to load model:', error);
@@ -47,9 +50,27 @@ loadModel(
 // Flag to track if we've switched to original texture
 let hasShownOriginalTexture = false;
 
+// Initialize first-person controls
+const fpsControls = new FirstPersonControls(camera, renderer.domElement);
+let isInFPSMode = false;
+
+// Store original model rotation for restoring after FPS mode
+let originalModelRotation = { x: 0, y: 0, z: 0 };
+
 // Button event listeners
 const showResultsBtn = document.getElementById('showResultsBtn');
 const closeTablesBtn = document.getElementById('closeTablesBtn');
+const enterFPSBtn = document.getElementById('enterFPSBtn');
+const exitFPSBtn = document.getElementById('exitFPSBtn');
+
+// Debug panel elements
+const fpsDebugPanel = document.getElementById('fpsDebugPanel');
+const rotXSlider = document.getElementById('rotX');
+const rotYSlider = document.getElementById('rotY');
+const rotZSlider = document.getElementById('rotZ');
+const rotXValue = document.getElementById('rotXValue');
+const rotYValue = document.getElementById('rotYValue');
+const rotZValue = document.getElementById('rotZValue');
 
 showResultsBtn.addEventListener('click', () => {
     showTables();
@@ -57,6 +78,101 @@ showResultsBtn.addEventListener('click', () => {
 
 closeTablesBtn.addEventListener('click', () => {
     hideTables();
+});
+
+// Debug slider event listeners
+if (DEBUG.enabled) {
+    // Initialize slider values from config
+    rotXSlider.value = MODEL.fpsRotation.x;
+    rotYSlider.value = MODEL.fpsRotation.y;
+    rotZSlider.value = MODEL.fpsRotation.z;
+    rotXValue.textContent = MODEL.fpsRotation.x.toFixed(2);
+    rotYValue.textContent = MODEL.fpsRotation.y.toFixed(2);
+    rotZValue.textContent = MODEL.fpsRotation.z.toFixed(2);
+
+    rotXSlider.addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value);
+        rotXValue.textContent = value.toFixed(2);
+        if (model && isInFPSMode) {
+            model.rotation.x = value;
+        }
+    });
+
+    rotYSlider.addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value);
+        rotYValue.textContent = value.toFixed(2);
+        if (model && isInFPSMode) {
+            model.rotation.y = value;
+        }
+    });
+
+    rotZSlider.addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value);
+        rotZValue.textContent = value.toFixed(2);
+        if (model && isInFPSMode) {
+            model.rotation.z = value;
+        }
+    });
+}
+
+enterFPSBtn.addEventListener('click', () => {
+    isInFPSMode = true;
+    fpsControls.enable();
+    enterFPSBtn.style.display = 'none';
+    showResultsBtn.style.display = 'none';
+    exitFPSBtn.style.display = 'block';
+
+    // Show debug panel if debug mode is enabled
+    if (DEBUG.enabled) {
+        fpsDebugPanel.style.display = 'block';
+    }
+
+    // Save current model rotation and apply FPS rotation
+    if (model) {
+        originalModelRotation.x = model.rotation.x;
+        originalModelRotation.y = model.rotation.y;
+        originalModelRotation.z = model.rotation.z;
+
+        const rotX = parseFloat(rotXSlider.value);
+        const rotY = parseFloat(rotYSlider.value);
+        const rotZ = parseFloat(rotZSlider.value);
+
+        model.rotation.x = rotX;
+        model.rotation.y = rotY;
+        model.rotation.z = rotZ;
+    }
+});
+
+exitFPSBtn.addEventListener('click', () => {
+    exitFPSMode();
+});
+
+// Function to exit FPS mode
+function exitFPSMode() {
+    if (!isInFPSMode) return;
+
+    isInFPSMode = false;
+    fpsControls.disable();
+    exitFPSBtn.style.display = 'none';
+    enterFPSBtn.style.display = 'block';
+    showResultsBtn.style.display = 'block';
+
+    // Hide debug panel
+    fpsDebugPanel.style.display = 'none';
+
+    // Restore original model rotation
+    if (model) {
+        model.rotation.x = originalModelRotation.x;
+        model.rotation.y = originalModelRotation.y;
+        model.rotation.z = originalModelRotation.z;
+    }
+}
+
+// Add keyboard listener for Q key to exit FPS mode
+document.addEventListener('keydown', (event) => {
+    if (event.code === 'KeyQ' && isInFPSMode) {
+        exitFPSMode();
+    }
 });
 
 // Animation loop
@@ -82,24 +198,30 @@ function animate() {
             }
         });
 
-        // Show the results button
+        // Show both buttons
         showResultsBtn.style.display = 'block';
+        enterFPSBtn.style.display = 'block';
     }
 
-    // Rotate the model on all enabled axes
-    if (model) {
-        rotateModel(model, ANIMATION.modelRotation);
-    }
+    // Update FPS controls if in FPS mode
+    if (isInFPSMode) {
+        fpsControls.update();
+    } else {
+        // Rotate the model on all enabled axes (only when not in FPS mode)
+        if (model) {
+            rotateModel(model, ANIMATION.modelRotation);
+        }
 
-    // Camera animation (if enabled)
-    if (ANIMATION.camera.enabled) {
-        const angle = elapsed * ANIMATION.camera.rotationSpeed;
-        const verticalOffset = Math.sin(elapsed * ANIMATION.camera.verticalSpeed) * ANIMATION.camera.verticalAngle;
+        // Camera animation (if enabled and not in FPS mode)
+        if (ANIMATION.camera.enabled) {
+            const angle = elapsed * ANIMATION.camera.rotationSpeed;
+            const verticalOffset = Math.sin(elapsed * ANIMATION.camera.verticalSpeed) * ANIMATION.camera.verticalAngle;
 
-        camera.position.x = Math.sin(angle) * ANIMATION.camera.orbitRadius;
-        camera.position.z = Math.cos(angle) * ANIMATION.camera.orbitRadius;
-        camera.position.y = verticalOffset;
-        camera.lookAt(0, 0, 0);
+            camera.position.x = Math.sin(angle) * ANIMATION.camera.orbitRadius;
+            camera.position.z = Math.cos(angle) * ANIMATION.camera.orbitRadius;
+            camera.position.y = verticalOffset;
+            camera.lookAt(0, 0, 0);
+        }
     }
 
     renderer.render(scene, camera);
