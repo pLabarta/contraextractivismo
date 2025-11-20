@@ -2,6 +2,7 @@ import { createScene, createCamera, createRenderer, createLights, setupResizeHan
 import { createMeshBackground, updateMeshBackground } from './background/meshBackground.js';
 import { loadModel, updateModelProgress, rotateModel } from './model/modelLoader.js';
 import { LoadingDisplay } from './ui/loadingDisplay.js';
+import { showTables, hideTables } from './ui/metalTables.js';
 import { ANIMATION } from './config.js';
 
 // Initialize scene, camera, and renderer
@@ -46,6 +47,18 @@ loadModel(
 // Flag to track if we've switched to original texture
 let hasShownOriginalTexture = false;
 
+// Button event listeners
+const showResultsBtn = document.getElementById('showResultsBtn');
+const closeTablesBtn = document.getElementById('closeTablesBtn');
+
+showResultsBtn.addEventListener('click', () => {
+    showTables();
+});
+
+closeTablesBtn.addEventListener('click', () => {
+    hideTables();
+});
+
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
@@ -60,7 +73,7 @@ function animate() {
     const progress = loadingDisplay.update();
     updateModelProgress(modelMaterial, progress);
 
-    // Automatically switch to original texture when loading completes
+    // Automatically switch to original texture and show button when loading completes
     if (loadingDisplay.isComplete() && !hasShownOriginalTexture && fbxObject && originalMaterials) {
         hasShownOriginalTexture = true;
         fbxObject.traverse((child) => {
@@ -68,6 +81,9 @@ function animate() {
                 child.material = originalMaterials.get(child);
             }
         });
+
+        // Show the results button
+        showResultsBtn.style.display = 'block';
     }
 
     // Rotate the model on all enabled axes

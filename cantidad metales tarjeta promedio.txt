@@ -1,0 +1,112 @@
+1. Socket de CPU (LGA)
+
+Base de cobre, aleaciones de níquel.
+
+Recubrimiento de oro en los contactos.
+
+2. Slots de RAM (DDR3/DDR4)
+
+Plásticos de ingeniería (nylon reforzado)
+
+Pines internos de cobre + níquel + oro muy delgado.
+
+3. Ranuras PCIe y PCI
+
+Igual: cobre, níquel, oro en los contactos.
+
+Cuerpo plástico.
+
+4. Chipset con disipador negro
+
+Bajo el disipador hay:
+
+Silicio dopado
+
+Cobre para conexiones
+
+Pequeñas soldaduras de estaño/plomo o estaño/plata/cobre.
+
+5. Puertos SATA (los azules)
+
+Contactos chapados en oro.
+
+Cobre y polímeros.
+
+6. Condensadores
+
+Hay dos tipos visibles:
+
+Electrolíticos de aluminio
+→ cuerpo de aluminio, electrolito líquido, base de cobre.
+
+SMD cerámicos
+→ dieléctrico de titanio u óxidos cerámicos (a veces contienen tantalio si son tantalum caps).
+
+7. Resistencias y MOSFETs
+
+Silicio, cobre, óxidos metálicos.
+
+Encapsulados con resinas epóxicas.
+
+8. PCB (la placa verde)
+
+El PCB contiene:
+
+Múltiples capas de cobre.
+
+Fibra de vidrio + resina epoxi (FR-4).
+
+Recubrimiento de soldadura con estaño, plata y cobre (libre de plomo en placas modernas).
+
+9. Conectores de energía
+
+Cobre niquelado con chapado fino de oro.
+
+
+
+
+Metales preciosos y críticos
+
+Oro (Au): 0.02 – 0.6 g
+
+Está en chapado de contactos (socket, ranuras RAM, PCI, SATA, conectores). Muchas placas contienen decenas a cientos de miligramos de oro en total. Placas muy densas/servidor suben hacia el extremo superior.
+
+Plata (Ag): 0.05 – 0.6 g
+
+Presente en algunas soldaduras (mezclas Sn-Ag-Cu) y contactos. La plata suele ser menor que el cobre pero puede estar en las soldaduras y en pastas conductoras.
+
+Paladio (Pd): 0.005 – 0.05 g
+
+Aparece en contactos y en algunos componentes SMD; en muy pequeña cantidad pero de alto valor unitario.
+
+Tántalo (Ta) (si hay capacitores tantalio): 0 – 0.5 g (depende de cuantos condensadores tantalio tenga la placa)
+
+Metales base y comunes
+
+Cobre (Cu): 20 – 60 g (típico 30–50 g para placas multilayer)
+
+Pistas internas + planos de alimentación + algunos conectores. Ejemplo de cálculo abajo.
+
+Estaño (Sn) (en soldadura): 5 – 30 g
+
+Depende de la cantidad y tipo de soldadura; placas con muchos componentes BGA/SMT tienen más soldadura.
+
+Plomo (Pb): 0 – 10 g
+
+Solo si la placa es antigua o no cumple RoHS; muchas placas modernas son lead-free (sin plomo).
+
+Aluminio (Al): 10 – 100 g
+
+En cuerpos de condensadores electrolíticos y algunos disipadores (si son de aluminio).
+
+Níquel (Ni): 0.5 – 5 g
+
+Subcapa en chapados (conectores), blindajes.
+
+Litio (Li)
+
+Litio total en la placa: 0 – 0.2 g (si hay batería tipo CR2032 presente)
+
+Explicación: las motherboards no usan litio en chips o pistas; el litio aparece principalmente en la batería de reloj (CR2032).
+
+Si la placa no tiene batería o está removida, la cantidad de litio se acerca a 0 g. Una CR2032 contiene en orden de magnitud centésimas de gramo de litio activo (varía por celda), por eso el rango pequeño.

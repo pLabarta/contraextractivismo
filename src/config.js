@@ -1,3 +1,9 @@
+// Debug settings
+export const DEBUG = {
+    enabled: true,  // Set to false for production
+    fastLoading: true  // When true, loading takes 2 seconds instead of 30
+};
+
 // Color constants
 export const COLORS = {
     background: 0x0a0a0a,
@@ -8,7 +14,7 @@ export const COLORS = {
 
 // Animation settings
 export const ANIMATION = {
-    loadingDuration: 30000, // 30 seconds in milliseconds
+    loadingDuration: (DEBUG.enabled && DEBUG.fastLoading) ? 2000 : 30000, // 2 or 30 seconds
     // Model rotation speeds per axis (use negative values to reverse direction)
     modelRotation: {
         x: 0,     // Rotation around X axis (pitch) - positive = forward tilt
