@@ -5,7 +5,8 @@ import {
     calculatePreciousMetalsValue,
     calculateTotalValue,
     calculateMetalValue,
-    MARKET_PRICES
+    MARKET_PRICES,
+    METAL_RANGES
 } from '../data/metalsData.js';
 
 export function populateMetalInfoTable() {
@@ -14,10 +15,26 @@ export function populateMetalInfoTable() {
 
     METAL_INFO.forEach(metal => {
         const row = document.createElement('tr');
+
+        // Extract metal base name (e.g., "Oro" from "Oro (Au)")
+        const metalBaseName = metal.name.split(' ')[0];
+        const range = METAL_RANGES[metalBaseName];
+
+        // Format range display
+        let rangeDisplay = 'N/A';
+        if (range) {
+            if (range.min === 0) {
+                rangeDisplay = `0 - ${range.max} ${range.unit}`;
+            } else {
+                rangeDisplay = `${range.min} - ${range.max} ${range.unit}`;
+            }
+        }
+
         row.innerHTML = `
             <td class="metal-name">${metal.name}</td>
             <td>${metal.uses}</td>
             <td>${metal.location}</td>
+            <td>${rangeDisplay}</td>
         `;
         tbody.appendChild(row);
     });
