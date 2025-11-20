@@ -2,7 +2,10 @@ import {
     METAL_INFO,
     generateMetalStats,
     calculateTotalWeight,
-    calculatePreciousMetalsValue
+    calculatePreciousMetalsValue,
+    calculateTotalValue,
+    calculateMetalValue,
+    MARKET_PRICES
 } from '../data/metalsData.js';
 
 export function populateMetalInfoTable() {
@@ -48,9 +51,12 @@ export function populateMetalStatsTable() {
             typeLabel = 'Crítico';
         }
 
+        const totalValue = calculateMetalValue(metal, data.value);
+
         row.innerHTML = `
             <td class="metal-name">${metal}</td>
             <td>${data.value.toFixed(3)} ${data.unit}</td>
+            <td class="value-column">$${totalValue.toFixed(2)}</td>
             <td><span class="metal-type ${typeClass}">${typeLabel}</span></td>
         `;
         tbody.appendChild(row);
@@ -58,9 +64,11 @@ export function populateMetalStatsTable() {
 
     // Update summary stats
     const totalWeight = calculateTotalWeight(stats);
+    const totalValue = calculateTotalValue(stats);
     const preciousValue = calculatePreciousMetalsValue(stats);
 
     document.getElementById('totalWeight').textContent = totalWeight.toFixed(2);
+    document.getElementById('totalValue').textContent = totalValue.toFixed(2);
     document.getElementById('preciousValue').textContent = preciousValue.toFixed(2);
 }
 

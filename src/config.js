@@ -4,6 +4,61 @@ export const DEBUG = {
     fastLoading: true  // When true, loading takes 2 seconds instead of 30
 };
 
+// Metal market prices with flexible units
+// Update these with current market prices from Kitco, LME, or Trading Economics
+// Supported units: 'oz' (troy ounce), 'lb' (pound), 'kg' (kilogram)
+// Prices are automatically converted to per gram for calculations
+// Last updated: Nov 19, 2025
+export const METAL_PRICES = {
+    "Oro": {
+        price: 4086.89,    // Gold - Nov 19, 2025
+        unit: 'oz'         // Price per troy ounce
+    },
+    "Plata": {
+        price: 51.297,     // Silver - Nov 19, 2025
+        unit: 'oz'         // Price per troy ounce
+    },
+    "Paladio": {
+        price: 1404.00,    // Palladium - Nov 19, 2025
+        unit: 'oz'         // Price per troy ounce
+    },
+    "Tántalo": {
+        price: 227,        // Tantalum - NOT PROVIDED, keeping old value
+        unit: 'lb'         // Price per pound
+    },
+    "Cobre": {
+        price: 5.0209,     // Copper - Nov 19, 2025
+        unit: 'lb'         // Price per pound
+    },
+    "Estaño": {
+        price: 16.725,     // Tin - Nov 18, 2025
+        unit: 'lb'         // Price per pound
+    },
+    "Plomo": {
+        price: 0.9150,     // Lead - Nov 19, 2025
+        unit: 'lb'         // Price per pound
+    },
+    "Aluminio": {
+        price: 1.2761,     // Aluminum - Nov 19, 2025
+        unit: 'lb'         // Price per pound
+    },
+    "Níquel": {
+        price: 6.6519,     // Nickel - Nov 19, 2025
+        unit: 'lb'         // Price per pound
+    },
+    "Litio": {
+        price: 12.503,     // Lithium - Nov 19, 2025
+        unit: 'kg'         // Price per kilogram
+    }
+};
+
+// Unit conversions to grams
+export const UNIT_CONVERSIONS = {
+    'oz': 31.1035,   // Troy ounce to grams
+    'lb': 453.592,   // Pound to grams
+    'kg': 1000       // Kilogram to grams
+};
+
 // Color constants
 export const COLORS = {
     background: 0x0a0a0a,

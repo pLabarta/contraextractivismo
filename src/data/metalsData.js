@@ -57,6 +57,27 @@ export const METAL_INFO = [
     }
 ];
 
+import { METAL_PRICES, UNIT_CONVERSIONS } from '../config.js';
+
+// Convert price from any unit to per gram
+function convertPriceToPerGram(priceData) {
+    const { price, unit } = priceData;
+    const gramsPerUnit = UNIT_CONVERSIONS[unit];
+
+    if (!gramsPerUnit) {
+        console.error(`Unknown unit: ${unit}`);
+        return 0;
+    }
+
+    return price / gramsPerUnit;
+}
+
+// Create price lookup in USD per gram
+const METAL_PRICES_PER_GRAM = {};
+for (const [metal, priceData] of Object.entries(METAL_PRICES)) {
+    METAL_PRICES_PER_GRAM[metal] = convertPriceToPerGram(priceData);
+}
+
 // Metal quantity ranges (in grams)
 export const METAL_RANGES = {
     "Oro": { min: 0.02, max: 0.6, unit: "g", precious: true },
@@ -94,19 +115,30 @@ export function calculateTotalWeight(stats) {
     return Object.values(stats).reduce((sum, metal) => sum + metal.value, 0);
 }
 
-// Calculate precious metals value (approximate market prices in USD per gram)
-const MARKET_PRICES = {
-    "Oro": 65,      // ~$65/g
-    "Plata": 0.8,   // ~$0.80/g
-    "Paladio": 95   // ~$95/g
-};
+// Export market prices (converted to per gram) for use in UI
+export const MARKET_PRICES = METAL_PRICES_PER_GRAM;
+
+export function calculateMetalValue(metal, grams) {
+    const pricePerGram = METAL_PRICES_PER_GRAM[metal] || 0;
+    return Math.round(grams * pricePerGram * 100) / 100;
+}
 
 export function calculatePreciousMetalsValue(stats) {
     let total = 0;
-    for (const [metal, price] of Object.entries(MARKET_PRICES)) {
+    const preciousMetals = ["Oro", "Plata", "Paladio"];
+
+    for (const metal of preciousMetals) {
         if (stats[metal]) {
-            total += stats[metal].value * price;
+            total += calculateMetalValue(metal, stats[metal].value);
         }
+    }
+    return Math.round(total * 100) / 100;
+}
+
+export function calculateTotalValue(stats) {
+    let total = 0;
+    for (const [metal, data] of Object.entries(stats)) {
+        total += calculateMetalValue(metal, data.value);
     }
     return Math.round(total * 100) / 100;
 }

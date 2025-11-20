@@ -258,6 +258,25 @@ header h1 {
     font-weight: 700;
 }
 
+.stats-summary .precious-highlight {
+    color: #ffd700;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(244, 228, 168, 0.3);
+}
+
+.price-column {
+    color: #aaaaaa;
+    font-family: 'Courier New', monospace;
+}
+
+.value-column {
+    color: #ffd700;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
 @media (max-width: 1200px) {
     .tables-container {
         grid-template-columns: 1fr;
