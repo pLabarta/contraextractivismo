@@ -408,6 +408,21 @@ header h1 {
     border-top: 1px solid rgba(244, 228, 168, 0.3);
 }
 
+.stats-summary .honorarios-highlight {
+    color: #88ccff;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+.stats-summary .total-highlight {
+    color: #00ff88;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+    border-top: 2px solid rgba(0, 255, 136, 0.4);
+}
+
 .price-column {
     color: #aaaaaa;
     font-family: 'Courier New', monospace;

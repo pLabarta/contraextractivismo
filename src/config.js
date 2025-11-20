@@ -73,8 +73,8 @@ export const ANIMATION = {
     // Model rotation speeds per axis (use negative values to reverse direction)
     modelRotation: {
         x: 0,     // Rotation around X axis (pitch) - positive = forward tilt
-        y: 0,  // Rotation around Y axis (yaw) - positive = counterclockwise from above
-        z: 0.003      // Rotation around Z axis (roll) - positive = clockwise
+        y: 0.003,  // Rotation around Y axis (yaw) - positive = counterclockwise from above
+        z: 0      // Rotation around Z axis (roll) - positive = clockwise
     },
     camera: {
         enabled: false,  // Enable camera rotation/orbit
@@ -131,22 +131,23 @@ export const LIGHTS = {
 
 // Model settings
 export const MODEL = {
-    path: '../motherboardscan.fbx',
+    path: '../placa_base.glb',
     // Initial rotation (radians) - determines how model is oriented at start
     rotation: {
-        x: -1,  // Tilt up/down (0 = flat, Math.PI/6 = tilted, Math.PI/2 = standing)
+        x: 0.5,  // Tilt up/down (0 = flat, Math.PI/6 = tilted, Math.PI/2 = standing)
         y: 0,  // Rotate left/right - animation will add to this
         z: 0   // Roll rotation
     },
     // Rotation in FPS mode (radians) - applied when entering first-person mode
     fpsRotation: {
-        x: -1.59,  // Tilt up/down (0 = flat/horizontal, good for walking on)
+        x: 0,  // Tilt up/down (0 = flat/horizontal, good for walking on)
         y: 0,  // Rotate left/right
         z: 0   // Roll rotation
     },
-    position: { x: 0, y: -1, z: 0 },  // Model position in scene
+    fpsScale: 10.0,  // Scale multiplier in FPS mode (makes model bigger for tiny perspective)
+    position: { x: 0, y: -0, z: 0 },  // Model position in scene
     scale: {
-        targetSize: 3  // Max dimension in units (1.5x of original 2)
+        targetSize: 3  // Max dimension in units - normal size, will be scaled up in FPS mode
     }
 };
 

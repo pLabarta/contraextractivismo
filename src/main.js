@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { createScene, createCamera, createRenderer, createLights, setupResizeHandler } from './scene/sceneSetup.js';
 import { createMeshBackground, updateMeshBackground } from './background/meshBackground.js';
 import { loadModel, updateModelProgress, rotateModel } from './model/modelLoader.js';
@@ -54,8 +55,13 @@ let hasShownOriginalTexture = false;
 const fpsControls = new FirstPersonControls(camera, renderer.domElement);
 let isInFPSMode = false;
 
-// Store original model rotation for restoring after FPS mode
+// Store original model rotation and scale for restoring after FPS mode
 let originalModelRotation = { x: 0, y: 0, z: 0 };
+let originalModelScale = { x: 1, y: 1, z: 1 };
+
+// FPS mode lighting
+let fpsTopLight = null;
+let fpsAmbientLight = null;
 
 // Button event listeners
 const showResultsBtn = document.getElementById('showResultsBtn');
@@ -127,11 +133,15 @@ enterFPSBtn.addEventListener('click', () => {
         fpsDebugPanel.style.display = 'block';
     }
 
-    // Save current model rotation and apply FPS rotation
+    // Save current model rotation and scale, then apply FPS rotation and scale
     if (model) {
         originalModelRotation.x = model.rotation.x;
         originalModelRotation.y = model.rotation.y;
         originalModelRotation.z = model.rotation.z;
+
+        originalModelScale.x = model.scale.x;
+        originalModelScale.y = model.scale.y;
+        originalModelScale.z = model.scale.z;
 
         const rotX = parseFloat(rotXSlider.value);
         const rotY = parseFloat(rotYSlider.value);
@@ -140,6 +150,20 @@ enterFPSBtn.addEventListener('click', () => {
         model.rotation.x = rotX;
         model.rotation.y = rotY;
         model.rotation.z = rotZ;
+
+        // Apply FPS scale multiplier
+        model.scale.multiplyScalar(MODEL.fpsScale);
+    }
+
+    // Add extra lighting for FPS mode
+    if (!fpsTopLight) {
+        fpsTopLight = new THREE.DirectionalLight(0xffffff, 2.0);
+        fpsTopLight.position.set(0, 50, 0);
+        scene.add(fpsTopLight);
+    }
+    if (!fpsAmbientLight) {
+        fpsAmbientLight = new THREE.AmbientLight(0xffffff, 1.0);
+        scene.add(fpsAmbientLight);
     }
 });
 
@@ -160,11 +184,25 @@ function exitFPSMode() {
     // Hide debug panel
     fpsDebugPanel.style.display = 'none';
 
-    // Restore original model rotation
+    // Restore original model rotation and scale
     if (model) {
         model.rotation.x = originalModelRotation.x;
         model.rotation.y = originalModelRotation.y;
         model.rotation.z = originalModelRotation.z;
+
+        model.scale.x = originalModelScale.x;
+        model.scale.y = originalModelScale.y;
+        model.scale.z = originalModelScale.z;
+    }
+
+    // Remove FPS mode lighting
+    if (fpsTopLight) {
+        scene.remove(fpsTopLight);
+        fpsTopLight = null;
+    }
+    if (fpsAmbientLight) {
+        scene.remove(fpsAmbientLight);
+        fpsAmbientLight = null;
     }
 }
 

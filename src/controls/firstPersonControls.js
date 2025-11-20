@@ -13,15 +13,15 @@ export class FirstPersonControls {
         this.rotateRight = false;
 
         // Movement settings
-        this.moveSpeed = 0.02;
+        this.moveSpeed = 0.01; // Faster movement for better navigation
         this.lookSpeed = 0.002;
         this.keyboardRotateSpeed = 0.03;
 
         // Gravity and physics
-        this.gravity = -0.003;
+        this.gravity = -0.0003; // 10x smaller gravity
         this.verticalVelocity = 0;
         this.isOnGround = false;
-        this.playerHeight = 0.1; // Height of the player's "feet" above ground
+        this.playerHeight = 0.08; // Height of the player's "eyes" above ground
 
         // Mouse look state
         this.euler = new THREE.Euler(0, 0, 0, 'YXZ');
@@ -71,8 +71,8 @@ export class FirstPersonControls {
         const center = new THREE.Vector3();
         box.getCenter(center);
 
-        // Position camera above the center of the model
-        this.camera.position.set(center.x, center.y + 2, center.z);
+        // Position camera much much higher above the center of the model
+        this.camera.position.set(center.x, center.y + 15.0, center.z);
 
         // Reset vertical velocity
         this.verticalVelocity = 0;

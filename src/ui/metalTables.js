@@ -83,18 +83,24 @@ export function populateMetalStatsTable() {
     const totalWeight = calculateTotalWeight(stats);
     const totalValue = calculateTotalValue(stats);
     const preciousValue = calculatePreciousMetalsValue(stats);
+    const honorarios = 660.00;
+    const grandTotal = totalValue + honorarios;
 
     document.getElementById('totalWeight').textContent = totalWeight.toFixed(2);
     document.getElementById('totalValue').textContent = totalValue.toFixed(2);
     document.getElementById('preciousValue').textContent = preciousValue.toFixed(2);
+    document.getElementById('honorariosValue').textContent = honorarios.toFixed(2);
+    document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
 }
 
 export function showTables() {
     const container = document.getElementById('tablesContainer');
     const showBtn = document.getElementById('showResultsBtn');
+    const fpsBtn = document.getElementById('enterFPSBtn');
 
     container.style.display = 'grid';
     showBtn.style.display = 'none';
+    fpsBtn.disabled = true;
 
     populateMetalInfoTable();
     populateMetalStatsTable();
@@ -103,7 +109,9 @@ export function showTables() {
 export function hideTables() {
     const container = document.getElementById('tablesContainer');
     const showBtn = document.getElementById('showResultsBtn');
+    const fpsBtn = document.getElementById('enterFPSBtn');
 
     container.style.display = 'none';
     showBtn.style.display = 'block';
+    fpsBtn.disabled = false;
 }

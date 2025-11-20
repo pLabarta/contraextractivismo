@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { COLORS, MODEL } from '../config.js';
 import modelVertexShader from '../shaders/model-vertex.js';
@@ -18,22 +18,23 @@ export function loadModel(scene, onLoad, onError) {
         }
     });
 
-    const loader = new FBXLoader();
+    const loader = new GLTFLoader();
 
     loader.load(
         MODEL.path,
-        (fbxObject) => {
-            console.log('FBX loaded successfully:', fbxObject);
+        (gltf) => {
+            const gltfObject = gltf.scene;
+            console.log('GLTF loaded successfully:', gltfObject);
 
-            // Apply rotation to fbxObject first to get correct orientation
-            fbxObject.rotation.x = MODEL.rotation.x;
-            fbxObject.rotation.y = MODEL.rotation.y;
+            // Apply rotation to gltfObject first to get correct orientation
+            gltfObject.rotation.x = MODEL.rotation.x;
+            gltfObject.rotation.y = MODEL.rotation.y;
 
             // Update matrices to apply rotation before calculating bounds
-            fbxObject.updateMatrixWorld(true);
+            gltfObject.updateMatrixWorld(true);
 
             // Calculate bounding box and scale AFTER rotation
-            const box = new THREE.Box3().setFromObject(fbxObject);
+            const box = new THREE.Box3().setFromObject(gltfObject);
             const center = box.getCenter(new THREE.Vector3());
             const size = box.getSize(new THREE.Vector3());
             const maxDim = Math.max(size.x, size.y, size.z);
@@ -42,12 +43,12 @@ export function loadModel(scene, onLoad, onError) {
             // Create a wrapper group for transforms
             const wrapper = new THREE.Group();
 
-            // Reset fbxObject rotation (will be applied via wrapper)
-            fbxObject.rotation.set(0, 0, 0);
+            // Reset gltfObject rotation (will be applied via wrapper)
+            gltfObject.rotation.set(0, 0, 0);
 
-            // Position the FBX object to center it within the wrapper
-            fbxObject.position.set(-center.x, -center.y, -center.z);
-            wrapper.add(fbxObject);
+            // Position the GLTF object to center it within the wrapper
+            gltfObject.position.set(-center.x, -center.y, -center.z);
+            wrapper.add(gltfObject);
 
             // Apply scale, rotation, and position to the wrapper
             wrapper.scale.setScalar(scale);
@@ -58,7 +59,7 @@ export function loadModel(scene, onLoad, onError) {
 
             // Store original materials for later toggle
             const originalMaterials = new Map();
-            fbxObject.traverse((child) => {
+            gltfObject.traverse((child) => {
                 if (child.isMesh) {
                     originalMaterials.set(child, child.material);
                 }
@@ -66,7 +67,7 @@ export function loadModel(scene, onLoad, onError) {
 
             // Create merged geometry version with shader material
             const geometries = [];
-            fbxObject.traverse((child) => {
+            gltfObject.traverse((child) => {
                 if (child.isMesh && child.geometry.attributes.position) {
                     const geom = child.geometry.clone();
                     child.updateWorldMatrix(true, false);
@@ -86,7 +87,7 @@ export function loadModel(scene, onLoad, onError) {
             console.log(`Found ${geometries.length} geometries`);
 
             if (geometries.length === 0) {
-                console.error('No meshes found in FBX file');
+                console.error('No meshes found in GLTF file');
                 return;
             }
 
@@ -110,7 +111,7 @@ export function loadModel(scene, onLoad, onError) {
             shaderMaterial.uniforms.uMaxX.value = centeredBox.max.x;
 
             // Initially apply shader material to all meshes
-            fbxObject.traverse((child) => {
+            gltfObject.traverse((child) => {
                 if (child.isMesh) {
                     child.material = shaderMaterial;
                 }
@@ -118,7 +119,7 @@ export function loadModel(scene, onLoad, onError) {
 
             scene.add(wrapper);
 
-            if (onLoad) onLoad(wrapper, shaderMaterial, originalMaterials, fbxObject);
+            if (onLoad) onLoad(wrapper, shaderMaterial, originalMaterials, gltfObject);
         },
         undefined,
         (error) => {
