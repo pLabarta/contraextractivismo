@@ -43,27 +43,8 @@ loadModel(
     }
 );
 
-// Toggle texture button functionality
-const textureToggle = document.getElementById('textureToggle');
-textureToggle.addEventListener('click', () => {
-    if (!fbxObject || !originalMaterials) return;
-
-    isOriginalTexture = !isOriginalTexture;
-
-    fbxObject.traverse((child) => {
-        if (child.isMesh) {
-            if (isOriginalTexture) {
-                // Switch to original texture
-                child.material = originalMaterials.get(child);
-                textureToggle.textContent = 'Yellow Shader';
-            } else {
-                // Switch to shader material
-                child.material = modelMaterial;
-                textureToggle.textContent = 'Original Texture';
-            }
-        }
-    });
-});
+// Flag to track if we've switched to original texture
+let hasShownOriginalTexture = false;
 
 // Animation loop
 function animate() {
@@ -78,6 +59,16 @@ function animate() {
     // Update loading progress
     const progress = loadingDisplay.update();
     updateModelProgress(modelMaterial, progress);
+
+    // Automatically switch to original texture when loading completes
+    if (loadingDisplay.isComplete() && !hasShownOriginalTexture && fbxObject && originalMaterials) {
+        hasShownOriginalTexture = true;
+        fbxObject.traverse((child) => {
+            if (child.isMesh) {
+                child.material = originalMaterials.get(child);
+            }
+        });
+    }
 
     // Rotate the model on all enabled axes
     if (model) {
